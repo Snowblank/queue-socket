@@ -46,19 +46,17 @@ export class QueueGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleDisconnect(client: Socket) {
-    const clientId: string = client.data.clientId;
-    if (!clientId) return;
-    const targetRoom = this.roomService.getRoomByUserId(clientId);
+    const targetRoom = this.roomService.getRoomBySocketId(client.id);
     if (!targetRoom) return;
 
-    targetRoom.removeQueueBySocketId(clientId);
+    targetRoom.removeQueueBySocketId(client.id);
 
     const isAvailableSlot = targetRoom.isAvailableSlotForBooking();
     if (isAvailableSlot) {
       await this.nextQueue(targetRoom);
     }
-    targetRoom.queue.waiting.forEach((clientId, index) => {
-      this.server.to(clientId).emit('updatePosition', { position: index + 1 });
+    targetRoom.queue.waiting.forEach((socketId, index) => {
+      this.server.to(socketId).emit('updatePosition', { position: index + 1 });
     });
     console.log('Client disconnected:', client.id);
   }

@@ -90,7 +90,6 @@ function App() {
     socket.on('joinedRoom', async ({ roomId }) => {
       await fetchTargetRoom(roomId);
       setStatus('joined');
-      setMessage(`✅ Joined room: ${roomId}`);
       setPosition(null);
     });
 
@@ -116,17 +115,22 @@ function App() {
     if (!roomId) return;
     socket.emit('selectRoom', { roomId }, async (response: ResponseSocket<{ queuePosition: number }>) => {
       console.log('response => selectRoom', response)
+        if (response.error != null) {
+        setMessage(response.error.message);
+        socket.emit('leaveRoom', { roomId })
+        setStatus('idle');
+        return
+      }
+      
       if (response.data.queuePosition === 0) {
         console.log('fetch targetRoom')
         //popup show waiting queue amount if not show page target room and get seatlist
         await fetchTargetRoom(roomId);
         setStatus('joined');
-        setMessage(`✅ Joined room: ${roomId}`);
       } else {
         setStatus('queue');
         setSelectRoomId(roomId);
         setPosition(response.data.queuePosition);
-        setMessage(`⏳ You are in queue`);
       }
     });
   }

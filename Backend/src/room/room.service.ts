@@ -35,12 +35,12 @@ export class RoomService {
     return targetRoom || null;
   }
 
-  getRoomByUserId(userId: string): Room | null {
+  getRoomBySocketId(socketId: string): Room | null {
     return (
       this.rooms.find(
         (room) =>
-          room.queue.waiting.includes(userId) ||
-          room.queue.usage.includes(userId),
+          room.queue.waiting.includes(socketId) ||
+          room.queue.usage.includes(socketId),
       ) || null
     );
   }
