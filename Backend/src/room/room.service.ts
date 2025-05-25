@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Room } from './room';
+import { RoomStatus } from './type';
 
 @Injectable()
 export class RoomService {
@@ -26,6 +27,26 @@ export class RoomService {
 
   getRooms(): Room[] {
     return this.rooms;
+  }
+
+  getRoomByFilter(filter: {
+    status?: RoomStatus;
+    isSeatAvailable?: boolean;
+  }): Room[] {
+    const allRoom = this.rooms;
+    const result = allRoom.filter((room) => {
+      const statusRoom = room.getStatus();
+      const statusMatch = !filter.status || statusRoom === filter.status;
+
+      const seatAvailableMatch =
+        typeof filter.isSeatAvailable !== 'boolean' ||
+        (filter.isSeatAvailable === true &&
+          statusRoom === RoomStatus.AVAILABLE) ||
+        (filter.isSeatAvailable === false && statusRoom === RoomStatus.FULL);
+
+      return statusMatch && seatAvailableMatch;
+    });
+    return result;
   }
 
   getRoomById(id: string): Room | null {

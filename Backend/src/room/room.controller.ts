@@ -1,14 +1,15 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RoomService } from './room.service';
 import { RoomResponse, RoomsResponse } from './type';
+import { GetRoomsQueryDto } from './dto/room.request';
 
 @Controller('rooms')
 export class RoomController {
   constructor(private readonly roomService: RoomService) {}
 
   @Get()
-  getRooms(): RoomsResponse[] {
-    const rooms = this.roomService.getRooms();
+  getRooms(@Query() query: GetRoomsQueryDto): RoomsResponse[] {
+    const rooms = this.roomService.getRoomByFilter(query);
     const result: RoomsResponse[] = rooms.map((room) => ({
       id: room.getId(),
       name: room.getName(),
