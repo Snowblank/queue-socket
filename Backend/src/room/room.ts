@@ -42,14 +42,18 @@ export class Room {
       : RoomStatus.AVAILABLE;
   }
 
+  getMaxSeat(): number {
+    return this.maxSeat;
+  }
+
   isCanJoin(): boolean {
     return (
-      this.queue.usage.length <= this.maxQueue && this.queue.waiting.length < 1
+      this.queue.usage.length < this.maxQueue && this.queue.waiting.length < 1
     );
   }
 
   isAvailableSlotForBooking(): boolean {
-    return this.queue.usage.length <= this.maxQueue;
+    return this.queue.usage.length < this.maxQueue;
   }
 
   assignSeatByUser(seatId: string, userId: string): Seat | null {
@@ -59,5 +63,12 @@ export class Room {
     }
     targetSeat.owner = userId;
     return targetSeat;
+  }
+
+  removeQueueBySocketId(id: string) {
+    this.queue.usage = this.queue.usage.filter((socketId) => socketId !== id);
+    this.queue.waiting = this.queue.waiting.filter(
+      (socketId) => socketId !== id,
+    );
   }
 }

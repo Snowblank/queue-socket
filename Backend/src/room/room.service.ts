@@ -9,17 +9,17 @@ export class RoomService {
   constructor() {}
 
   onModuleInit() {
-    const amountRoom = 5;
-    const seatCount = 5;
+    const amountRoom = 2;
+    const seatCount = 2;
     for (let i = 0; i < amountRoom; i++) {
       const roomName = `Room ${i + 1}`;
       this.createRoom(roomName, seatCount);
     }
-    console.log('create room success');
+    console.log('initalize room success');
   }
 
   createRoom(name: string, seatCount: number): void {
-    const maxQueue = 5;
+    const maxQueue = 2;
     const newRoom = new Room(randomUUID(), name, seatCount, maxQueue);
     this.rooms.push(newRoom);
   }
@@ -29,7 +29,19 @@ export class RoomService {
   }
 
   getRoomById(id: string): Room | null {
-    const targetRoom = this.rooms.find((room) => room.getId() === id);
+    const targetRoom = this.rooms.find((room) => {
+      return room.getId() == id;
+    });
     return targetRoom || null;
+  }
+
+  getRoomByUserId(userId: string): Room | null {
+    return (
+      this.rooms.find(
+        (room) =>
+          room.queue.waiting.includes(userId) ||
+          room.queue.usage.includes(userId),
+      ) || null
+    );
   }
 }

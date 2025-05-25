@@ -1,12 +1,30 @@
-export interface RoomResponse { //TODO: implement for interface controller
+export interface RoomsResponse {
   id: string;
   name: string;
+  status: RoomStatus;
+  seat: {
+    booking: number;
+    max: number;
+  };
+}
+export interface RoomResponse {
+  id: string;
+  name: string;
+  status: RoomStatus;
   seat: {
     id: string;
     owner: string | null;
   }[];
-  queue: number;
-  status: RoomStatus;
+}
+
+export interface ResponseSelectRoom {
+  queuePosition: number;
+}
+
+export interface ResponseSubmitSeat {
+  message: string;
+  roomId: string;
+  seatId: string;
 }
 
 export interface User {
