@@ -115,13 +115,14 @@ function App() {
     if (!roomId) return;
     socket.emit('selectRoom', { roomId }, async (response: ResponseSocket<{ queuePosition: number }>) => {
       console.log('response => selectRoom', response)
-        if (response.error != null) {
+      if (response.error != null) {
         setMessage(response.error.message);
         socket.emit('leaveRoom', { roomId })
+        await fetchRoomList()
         setStatus('idle');
         return
       }
-      
+
       if (response.data.queuePosition === 0) {
         console.log('fetch targetRoom')
         //popup show waiting queue amount if not show page target room and get seatlist
@@ -138,10 +139,11 @@ function App() {
   const handleSubmitSeat = (roomId: string, seatId: string) => {
     if (!seatId) return;
     console.log('click => submitSeat Button')
-    socket.emit('submitSeat', { roomId, seatId }, (response: ResponseSocket<{ message: string; roomId: string; seatId: string }>) => {
+    socket.emit('submitSeat', { roomId, seatId }, async (response: ResponseSocket<{ message: string; roomId: string; seatId: string }>) => {
       if (response.error != null) {
         setMessage(response.error.message);
         socket.emit('leaveRoom', { roomId })
+        await fetchRoomList()
         setStatus('idle');
         return
       }
@@ -152,9 +154,10 @@ function App() {
     });
   };
 
-  const handleLeave = (roomId: string) => {
+  const handleLeave = async (roomId: string) => {
     socket.emit('leaveRoom', { roomId });
     setSelectRoomId(null)
+    await fetchRoomList()
     setStatus('idle');
   };
 
