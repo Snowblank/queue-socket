@@ -10,8 +10,8 @@ export class RoomService {
   constructor() {}
 
   onModuleInit() {
-    const amountRoom = 5;
-    const seatCount = 5;
+    const amountRoom = 5; //amount room for gen
+    const seatCount = 5; //seat in room amount
     for (let i = 0; i < amountRoom; i++) {
       const roomName = `Room ${i + 1}`;
       this.createRoom(roomName, seatCount);
@@ -20,7 +20,7 @@ export class RoomService {
   }
 
   createRoom(name: string, seatCount: number): void {
-    const maxQueue = 5;
+    const maxQueue = 5; //limit queue in one room
     const newRoom = new Room(randomUUID(), name, seatCount, maxQueue);
     this.rooms.push(newRoom);
   }
